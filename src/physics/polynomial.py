@@ -37,6 +37,7 @@ class Loss:
 class Config:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     modelPath: str = "saved_models/basic_model.pth" 
+    output_dim: int = 1
     # fizyka
     c: float = 0.51
     r_max: float = 55.0
@@ -54,7 +55,7 @@ class Config:
     finetune_optimizer: callable = partial(torch.optim.Adam, lr=1e-2)
     finetune_scheduler: callable = partial(torch.optim.lr_scheduler.ReduceLROnPlateau, 
                                            mode='min', 
-                                           factor=0.5,
+                                           factor=0.1,
                                            patience=100,
                                            threshold=1e-6)
     finetune_loss_fn: callable = Loss(Potential(c), is_pretrain=False)
