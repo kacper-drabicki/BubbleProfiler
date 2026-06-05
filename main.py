@@ -2,7 +2,6 @@ import argparse
 import torch
 from src.model import Bouncer
 from train import pretrain, finetune
-
 from src.physics import polynomial, singlet
 
 EXPERIMENTS = {
