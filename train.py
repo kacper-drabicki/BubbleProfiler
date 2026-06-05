@@ -18,7 +18,7 @@ def train(model, loss_fn, optimizer, epochs, scheduler, config):
         loss.backward()
         
         optimizer.step()
-        scheduler.step(loss)
+        scheduler.step(loss.item())
 
         if epoch % 1000 == 0:
             print(f'Epoch: {epoch}; Loss: {loss.item():.10e}')
