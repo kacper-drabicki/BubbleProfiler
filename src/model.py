@@ -17,4 +17,4 @@ class Bouncer(nn.Module):
             )
         
     def forward(self, x):
-        return self.network(x)
+        return self.network(x) # returns (batch_size, output_dim)
