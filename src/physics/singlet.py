@@ -102,7 +102,7 @@ class Loss:
 @dataclass
 class Config:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
-    modelPath: str = "saved_models/basic_model.pth" 
+    modelPath: str = "saved_models/singlet.pth" 
     output_dim: int = 2
     # fizyka
     Tc: float = 110.0
