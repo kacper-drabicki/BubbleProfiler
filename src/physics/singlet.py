@@ -28,38 +28,40 @@ class Potential:
         self.c_h = (1.0 / 48.0) * (9.0 * g**2 + 3.0 * gPrime**2 + 2.0 * (6.0 * h_t + 12.0 * lambda_h + lambda_m))
         self.c_s = (1.0 / 12.0) * (2.0 * lambda_m + 3.0 * lambda_s)
         
-        self.mu_2_h = lambda_h * (vEW**2)
+        self.mu_2_h = lambda_h  * (vEW**2)
         v2_tc = vEW**2 - (self.c_h / lambda_h) * (Tc**2)
-        self.mu_2_s = -v2_tc * sqrt(lambda_h * lambda_s) - self.c_s * (Tc**2)
+        self.mu_2_s = (-v2_tc * sqrt(lambda_h * lambda_s) - self.c_s * (Tc**2))
 
     def v(self, T: float):
-        return sqrt(vEW**2 - (self.c_h / lambda_h) * (T**2))
+        return sqrt(vEW**2 - (self.c_h / lambda_h) * (T**2)) / vEW # normalization
 
     def w(self, T: float):
-        return sqrt(-(self.mu_2_s + self.c_s * (T**2)) / self.lambda_s)
+        return sqrt(-(self.mu_2_s + self.c_s * (T**2)) / self.lambda_s) / vEW # normalization
 
     def V(self, X, T: float):
-        h, s = X[:, 0:1], X[:, 1:2]
-        term_h = -0.5 * self.mu_2_h * h**2 + 0.25 * lambda_h * h**4
-        term_s = 0.5 * self.mu_2_s * s**2 + 0.25 * self.lambda_s * s**4
+        h, s = X[..., 0], X[..., 1] # this satisfies the specific requirements of CosmoTransitions
+        
+        # we normalize T**2, self.mu_2_h and self.mu_2_s by vEW**2
+        term_h = -0.5 * self.mu_2_h / (vEW**2) * h**2 + 0.25 * lambda_h * h**4 
+        term_s = 0.5 * self.mu_2_s / (vEW**2) * s**2 + 0.25 * self.lambda_s * s**4
         term_mixed = 0.25 * self.lambda_m * (s * h) ** 2
-        term_thermal = 0.5 * (self.c_h * h**2 + self.c_s * s**2) * T**2
+        term_thermal = 0.5 * (self.c_h * h**2 + self.c_s * s**2) * T**2 / vEW**2    
         return term_h + term_s + term_mixed + term_thermal
 
     def dV(self, X, T: float):
-        h, s = X[:, 0:1], X[:, 1:2]
+        h, s = X[..., 0], X[..., 1]
+        
         t2 = (T**2) / (vEW**2)
-        mu_h = self.mu_2_h / (vEW**2)
-        mu_s = self.mu_2_s / (vEW**2)
-
-        dv_dh = -mu_h * h + lambda_h * h**3 + 0.5 * self.lambda_m * s**2 * h + self.c_h * h * t2
-        dv_ds = mu_s * s + self.lambda_s * s**3 + 0.5 * self.lambda_m * h**2 * s + self.c_s * s * t2
+        
+        # we normalize T**2, self.mu_2_h and self.mu_2_s by vEW**2
+        dv_dh = -self.mu_2_h / (vEW**2) * h + lambda_h * h**3 + 0.5 * self.lambda_m * s**2 * h + self.c_h * h * t2
+        dv_ds = self.mu_2_s / (vEW**2) * s + self.lambda_s * s**3 + 0.5 * self.lambda_m * h**2 * s + self.c_s * s * t2
         
         # check if X is torch.tensor or np.array so that we can return the same type
         if isinstance(X, torch.Tensor):
-            return torch.concat((dv_dh, dv_ds), dim=1)
+            return torch.stack((dv_dh, dv_ds), dim=1)
         elif isinstance(X, np.ndarray):
-            return np.concatenate((dv_dh, dv_ds), axis=1)
+            return np.stack((dv_dh, dv_ds), axis=1)
         else:
             raise ValueError("Unsupported type for X. Expected torch.Tensor or np.ndarray.")
     
@@ -90,7 +92,7 @@ class Loss:
         if self.is_pretrain:
             h_zero = h[0:1]
             s_zero = s[0:1]
-            loss_boundary_zero_h = torch.mean((h_zero - self.potential.v(self.T)/vEW)**2)
+            loss_boundary_zero_h = torch.mean((h_zero - self.potential.v(self.T))**2)
             loss_boundary_zero_s = torch.mean((s_zero)**2)
         else:
             h_r_zero = h_r[0:1]
@@ -99,7 +101,7 @@ class Loss:
             loss_boundary_zero_s = torch.mean(s_r_zero**2)
         
         loss_boundary_max_h = torch.mean((h_limit)**2)
-        loss_boundary_max_s = torch.mean((s_limit - self.potential.w(self.T)/vEW)**2)
+        loss_boundary_max_s = torch.mean((s_limit - self.potential.w(self.T))**2)
 
         loss = (loss_physics_h + loss_boundary_zero_h + loss_boundary_max_h +
                 loss_physics_s + loss_boundary_zero_s + loss_boundary_max_s)

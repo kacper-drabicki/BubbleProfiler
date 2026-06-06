@@ -1,6 +1,6 @@
 # PINN Bubble Profiler
 
-Brief physics‑informed neural network (PINN) experiments for spherically symmetric field/bubble profiles. The repository contains small PINN examples (polynomial toy model and a 2-field singlet/Higgs-like potential) used to learn radial field profiles that satisfy the underlying Euler–Lagrange / field equations. Related methods: Raissi et al., "Physics-informed neural networks" (2019).
+Brief physics‑informed neural network (PINN) experiments for spherically symmetric field/bubble profiles. The repository contains small PINN examples (polynomial toy model and a 2-field singlet/Higgs-like potential) used to learn radial field profiles that satisfy the underlying Euler–Lagrange / field equations. Finding the bubble profile is equivalent to solving a nonlinear boundary value problem; PINNs replace a numerical ODE solver by encoding the residual of the field equation directly into the loss function. Related methods: Raissi et al., "Physics-informed neural networks" (2019).
 
 **Quick Start**
 
