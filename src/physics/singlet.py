@@ -114,14 +114,14 @@ class Config:
     pretrain_epochs: int = 50000
     pretrain_loss_fn: callable = Loss(Potential(Tc, lambda_m, lambda_s), T=T, is_pretrain=True)
     pretrain_optimizer: callable = partial(torch.optim.Adam, lr=1e-2)
-    pretrain_scheduler: callable = partial(torch.optim.lr_scheduler.ONeCycleLR, 
+    pretrain_scheduler: callable = partial(torch.optim.lr_scheduler.OneCycleLR, 
                                            max_lr=1e-2, 
                                            total_steps=pretrain_epochs)
     # finetune
     finetune_epochs: int = 200000
     finetune_loss_fn: callable = Loss(Potential(Tc, lambda_m, lambda_s), T=T, is_pretrain=False)
     finetune_optimizer: callable = partial(torch.optim.Adam, lr=1e-2)
-    finetune_scheduler: callable = partial(torch.optim.lr_scheduler.ONeCycleLR, 
+    finetune_scheduler: callable = partial(torch.optim.lr_scheduler.OneCycleLR, 
                                            max_lr=1e-2, 
                                            total_steps=finetune_epochs)
 
