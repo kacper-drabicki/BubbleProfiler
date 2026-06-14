@@ -24,7 +24,7 @@ class Potential:
         self.lambda_m = lambda_m
         self.lambda_s = lambda_s
         
-        # Core physical parameter computation moved directly to initialization
+        # Core physical parameter computation moved directly to initialization 
         self.c_h = (1.0 / 48.0) * (9.0 * g**2 + 3.0 * gPrime**2 + 2.0 * (6.0 * h_t + 12.0 * lambda_h + lambda_m))
         self.c_s = (1.0 / 12.0) * (2.0 * lambda_m + 3.0 * lambda_s)
         
