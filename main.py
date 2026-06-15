@@ -1,7 +1,8 @@
 import argparse
 import torch
-from src.model import Bouncer
 from train import pretrain, finetune
+from bubble_profile_comparison import BubbleProfileComparison
+from src.model import Bouncer
 from src.physics import polynomial, singlet
 
 EXPERIMENTS = {
@@ -24,7 +25,10 @@ def main():
     print("=== FINETUNE ===")
     finetune(model, config)
 
-    torch.save(model.state_dict(), config.modelPath)
+    torch.save(model.state_dict(), config.saveModelPath)
+
+    comparison = BubbleProfileComparison(config, model)
+    comparison.plot_and_save()
 
 if __name__ == "__main__":
     main()

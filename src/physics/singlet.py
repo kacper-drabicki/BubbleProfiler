@@ -112,23 +112,26 @@ class Loss:
 @dataclass
 class Config:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
-    modelPath: str = "saved_models/singlet.pth" 
+    model_name: str = "singlet"
+    saveModelPath: str = f"saved_models/{model_name}.pth"
+    saveComparisonPath: str = f"outputs/{model_name}.png"
     output_dim: int = 2
     # fizyka
     Tc: float = 110.0
     lambda_m: float = 1.5
     lambda_s: float = 0.65
-    T: float = 105.0
+    T: float = 85.0
     r_max: float = 90.0
+    potential: type[Potential] = Potential
     # pretrain
-    pretrain_epochs: int = 50000
+    pretrain_epochs: int = 1000
     pretrain_loss_fn: callable = Loss(Potential(Tc, lambda_m, lambda_s), T=T, is_pretrain=True)
     pretrain_optimizer: callable = partial(torch.optim.Adam, lr=1e-2)
     pretrain_scheduler: callable = partial(torch.optim.lr_scheduler.OneCycleLR, 
                                            max_lr=1e-2, 
                                            total_steps=pretrain_epochs)
     # finetune
-    finetune_epochs: int = 200000
+    finetune_epochs: int = 1000
     finetune_loss_fn: callable = Loss(Potential(Tc, lambda_m, lambda_s), T=T, is_pretrain=False)
     finetune_optimizer: callable = partial(torch.optim.Adam, lr=1e-2)
     finetune_scheduler: callable = partial(torch.optim.lr_scheduler.OneCycleLR, 
