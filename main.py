@@ -1,3 +1,4 @@
+import os
 import argparse
 import torch
 from train import pretrain, finetune
@@ -14,6 +15,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp", choices=EXPERIMENTS.keys())
     args = parser.parse_args()
+
+    os.makedirs("saved_models", exist_ok=True)
+    os.makedirs("outputs", exist_ok=True)
     
     config = EXPERIMENTS[args.exp][0]()
     

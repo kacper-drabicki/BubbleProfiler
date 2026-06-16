@@ -117,18 +117,18 @@ class Config:
     Tc: float = 110.0
     lambda_m: float = 1.5
     lambda_s: float = 0.65
-    T: float = 85.0
+    T: float = 80.0
     r_max: float = 50.0
     potential: type[Potential] = Potential
     # pretrain
-    pretrain_epochs: int = 50000
+    pretrain_epochs: int = 50
     pretrain_loss_fn: callable = Loss(Potential(Tc, lambda_m, lambda_s), T=T, is_pretrain=True)
     pretrain_optimizer: callable = partial(torch.optim.Adam, lr=1e-2)
     pretrain_scheduler: callable = partial(torch.optim.lr_scheduler.OneCycleLR, 
                                            max_lr=1e-2, 
                                            total_steps=pretrain_epochs)
     # finetune
-    finetune_epochs: int = 200000
+    finetune_epochs: int = 200
     finetune_loss_fn: callable = Loss(Potential(Tc, lambda_m, lambda_s), T=T, is_pretrain=False)
     finetune_optimizer: callable = partial(torch.optim.Adam, lr=1e-2)
     finetune_scheduler: callable = partial(torch.optim.lr_scheduler.OneCycleLR, 

@@ -24,11 +24,7 @@ python main.py --exp singlet
 python main.py --exp polynomial
 ```
 
-This will run a pretraining stage and a finetuning stage and save the model to the path configured in the experiment `Config` (example: `saved_models/polynomial.pth`). Create the directory if it does not exist:
-
-```bash
-mkdir -p saved_models
-```
+This will run a pretraining stage and a finetuning stage and save the model to the path configured in the experiment `Config` (example: `saved_models/polynomial.pth`). 
 
 Project structure
 - `main.py` — CLI entry point. Choose experiment with `--exp`.
