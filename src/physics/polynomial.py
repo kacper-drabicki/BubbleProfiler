@@ -36,11 +36,14 @@ class Loss:
 @dataclass
 class Config:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
-    modelPath: str = "saved_models/polynomial.pth" 
+    model_name: str = "polynomial"
+    saveModelPath: str = f"saved_models/{model_name}.pth"
+    saveComparisonPath: str = f"outputs/{model_name}.png"
     output_dim: int = 1
-    # fizyka
+    # physics
     c: float = 0.51
     r_max: float = 55.0
+    potential: type[Potential] = Potential
     # pretrain
     pretrain_epochs: int = 50000
     pretrain_loss_fn: callable = Loss(Potential(c), is_pretrain=True)
