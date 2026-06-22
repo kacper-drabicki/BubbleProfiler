@@ -40,6 +40,7 @@ def train(model, loss_fn, optimizer, epochs, scheduler, config):
 
 
 def pretrain(model, config):
+    # runs training with simplfied boundary conditions to enfore general structure of the solution
     return train(
         model,
         loss_fn=config.pretrain_loss_fn,
@@ -51,6 +52,7 @@ def pretrain(model, config):
 
 
 def finetune(model, config):
+    # runs training using the correct boundary conditions
     return train(
         model,
         loss_fn=config.finetune_loss_fn,
