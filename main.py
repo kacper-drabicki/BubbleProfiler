@@ -2,7 +2,7 @@ import os
 import argparse
 import torch
 from train import pretrain, finetune
-from compare_profile_with_benchmark import PolynomialProfileComparison, SingletProfileComparison
+from compare_benchmark import PolynomialProfileComparison, SingletProfileComparison
 from model import Bouncer
 from physics import polynomial, singlet
 
