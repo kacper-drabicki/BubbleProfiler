@@ -1,27 +1,43 @@
 import torch
 
-def train(model, loss_fn, optimizer, epochs, scheduler, config):
-    device = torch.device(config.device)
-    model.train()
-    
-    r  = torch.linspace(0.01, config.r_max, 500, device=device).view(-1,1).requires_grad_(True)
 
+def train(model, loss_fn, optimizer, epochs, scheduler, config):
+    # Select computation device (CPU or GPU) from config
+    device = torch.device(config.device)
+
+    # Set model to training mode (enables dropout, etc. if present)
+    model.train()
+
+    # Radial coordinate grid for solving the PDE
+    # NOTE: start at 0.01 to avoid r=0 singularity in radial equations
+    r = torch.linspace(0.01, config.r_max, 500, device=device).view(-1, 1).requires_grad_(True)
+
+    # Instantiate optimizer and learning-rate scheduler from config
     optimizer = optimizer(model.parameters())
     scheduler = scheduler(optimizer)
+
     for epoch in range(epochs):
         optimizer.zero_grad()
 
+        # Forward pass
         y = model(r)
 
+        # Compute physics-informed loss:
+        # includes PDE residual + boundary conditions
         loss = loss_fn(r, y)
 
+        # Backpropagation through physics loss
         loss.backward()
-        
+
         optimizer.step()
+
+        # Update scheduler
         scheduler.step(loss.item())
 
+        # Logging for monitoring convergence
         if epoch % 1000 == 0:
             print(f'Epoch: {epoch}; Loss: {loss.item():.10e}')
+
 
 def pretrain(model, config):
     return train(
@@ -32,6 +48,7 @@ def pretrain(model, config):
         scheduler=config.pretrain_scheduler,
         config=config
     )
+
 
 def finetune(model, config):
     return train(
