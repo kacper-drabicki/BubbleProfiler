@@ -2,9 +2,9 @@ import os
 import argparse
 import torch
 from train import pretrain, finetune
-from bubble_profile_comparison import PolynomialProfileComparison, SingletProfileComparison
-from src.model import Bouncer
-from src.physics import polynomial, singlet
+from compare_profile_with_benchmark import PolynomialProfileComparison, SingletProfileComparison
+from model import Bouncer
+from physics import polynomial, singlet
 
 EXPERIMENTS = {
     "singlet": (singlet.Config, SingletProfileComparison),
@@ -31,8 +31,8 @@ def main():
 
     torch.save(model.state_dict(), config.saveModelPath)
         
-    comparison = EXPERIMENTS[args.exp][1](config, model)
-    comparison.plot_and_save()
+    comparison_with_benchmark = EXPERIMENTS[args.exp][1](config, model)
+    comparison_with_benchmark.plot_and_save()
 
 if __name__ == "__main__":
     main()
